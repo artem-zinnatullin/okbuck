@@ -39,6 +39,8 @@ final class DependencyUtils {
     }
 
     static void downloadSourceJars(Project project, Set<Configuration> configurations) {
+        configurations = filterResolvable(configurations)
+
         new IdeDependenciesExtractor().extractRepoFileDependencies(
                 project.dependencies,
                 configurations,
@@ -53,5 +55,17 @@ final class DependencyUtils {
 
     static boolean isConsumable(File file) {
         return file.name.endsWith(".jar") || file.name.endsWith(".aar")
+    }
+
+    static Set<Configuration> filterResolvable(Set<Configuration> configurations) {
+        def resolvableConfigurations = new HashSet<Configuration>()
+
+        for (Configuration configuration : configurations) {
+            if (configuration.isCanBeResolved()) {
+                resolvableConfigurations.add(configuration)
+            }
+        }
+
+        return resolvableConfigurations
     }
 }

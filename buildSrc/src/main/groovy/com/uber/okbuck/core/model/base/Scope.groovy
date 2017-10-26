@@ -105,6 +105,8 @@ class Scope {
     }
 
     private void extractConfigurations(Set<Configuration> configurations) {
+        configurations = DependencyUtils.filterResolvable(configurations)
+
         if (configurations.size() == 0) {
             return
         }
