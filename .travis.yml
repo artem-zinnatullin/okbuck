@@ -5,7 +5,7 @@ jdk: oraclejdk8
 
 dist: precise
 
-before_install:
+before_script:
   - export SKIP_OKBUCK=true
   - export EXTRA_OKBUCK_ARGS="--quiet --stacktrace"
   - export ANDROID_HOME="$HOME"/android-sdk
@@ -19,7 +19,7 @@ before_install:
   - export ANDROID_SDK_INSTALL_COMPONENT="echo \"y\" | \"$ANDROID_HOME\"/tools/bin/sdkmanager > /dev/null"
   - eval $ANDROID_SDK_INSTALL_COMPONENT '"tools"'
   - eval $ANDROID_SDK_INSTALL_COMPONENT '"platform-tools"'
-  - eval $ANDROID_SDK_INSTALL_COMPONENT '"build-tools;26.0.0"'
+  - eval $ANDROID_SDK_INSTALL_COMPONENT '"build-tools;26.0.2"'
   - eval $ANDROID_SDK_INSTALL_COMPONENT '"platforms;android-26"'
   - eval $ANDROID_SDK_INSTALL_COMPONENT '"extras;android;m2repository"'
   - eval $ANDROID_SDK_INSTALL_COMPONENT '"system-images;android-18;default;armeabi-v7a"'
@@ -28,7 +28,7 @@ before_install:
   - emulator -avd test -no-audio -no-window &
 
 install:
-  - echo "Override default Travis install step to avoid unnecessary './gradlew assemble'."
+  - echo "Overriding default Travis install step to avoid unnecessary './gradlew assemble'."
 
 script:
   - SKIP_OKBUCK= ./buckw --version
@@ -47,7 +47,7 @@ script:
       fi
     fi
   - ./buckw test --include unit
-  - android-wait-for-emulator
+  - PATH="$PATH" ./.android-wait-for-emulator.sh
   - adb shell input keyevent 82
   - ./buckw test //app:instrumentation_demoDebug_test
 
