@@ -291,6 +291,7 @@ public class DependencyManager {
             cDependency ->
                 DependencyFactory.fromDependency(cDependency)
                     .stream()
+                    .filter(it -> !excludeDependency(it))
                     .peek(
                         it -> {
                           if (!dependencyMap.containsKey(it)) {
@@ -309,6 +310,10 @@ public class DependencyManager {
                     .collect(Collectors.toSet()))
         .flatMap(Collection::stream)
         .collect(Collectors.toSet());
+  }
+
+  private static boolean excludeDependency(VersionlessDependency dep) {
+    return dep.mavenCoords().startsWith("com.android.support:support-annotations");
   }
 
   private static RuntimeException dependencyException(ResolvedDependency dependency) {
