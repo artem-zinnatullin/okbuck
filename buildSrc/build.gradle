@@ -99,8 +99,8 @@ task sourcesJar(type: Jar) {
     classifier = "sources"
 }
 
-def publishVersion = "0.48.7"
-group = "com.uber"
+def publishVersion = "0.48.7-lyft-hacks-4"
+group = "com.lyft"
 version = publishVersion
 def siteUrl = "https://github.com/uber/okbuck"
 def gitUrl = "https://github.com/uber/okbuck.git"

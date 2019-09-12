@@ -119,17 +119,21 @@ public class DependencyManager {
         .asMap()
         .forEach(
             (key, value) -> {
-              if (value.size() == 1) {
-                // Already has one dependency, no need to resolve different versions.
-                filteredDependencyMapBuilder.put(key, value);
-              } else if (externalDependenciesExtension.useLatest(key)) {
-                dependenciesToResolveBuilder.addAll(value);
-              } else {
-                filteredDependencyMapBuilder.put(key, value);
+              if (true || !key.mavenCoords().startsWith("com.google.guava:guava")) {
+                if (value.size() == 1) {
+                  // Already has one dependency, no need to resolve different versions.
+                  filteredDependencyMapBuilder.put(key, value);
+                } else if (externalDependenciesExtension.useLatest(key)) {
+                  dependenciesToResolveBuilder.addAll(value);
+                } else {
+                  filteredDependencyMapBuilder.put(key, value);
+                }
               }
             });
 
     resolved(dependenciesToResolveBuilder.build())
+        .stream()
+        //.filter((it) -> !it.getMavenCoords().startsWith("com.google.guava:guava"))
         .forEach(
             externalDependency -> {
               filteredDependencyMapBuilder.put(
@@ -250,6 +254,8 @@ public class DependencyManager {
     resolvedConfiguration
         .getLenientConfiguration()
         .getAllModuleDependencies()
+        .stream()
+        //.filter((it) -> !(it.getModuleGroup().equals("com.google.guava") && it.getName().equals("guava")))
         .forEach(
             rDependency -> {
               Set<ExternalDependency> childDependencies =
@@ -262,6 +268,7 @@ public class DependencyManager {
               DependencyFactory.fromDependency(rDependency)
                   .stream()
                   .filter(it -> !it.classifier().isPresent())
+                  .filter(it -> !excludeDependency(it, rDependency))
                   .peek(
                       it -> {
                         if (!dependencyMap.containsKey(it)) {
@@ -287,11 +294,12 @@ public class DependencyManager {
     return rDependency
         .getChildren()
         .stream()
+        //.filter((it) -> !(it.getModuleGroup().equals("com.google.guava") && it.getName().equals("guava")))
         .map(
             cDependency ->
                 DependencyFactory.fromDependency(cDependency)
                     .stream()
-                    .filter(it -> !excludeDependency(it))
+                    .filter(it -> !excludeDependency(it, cDependency))
                     .peek(
                         it -> {
                           if (!dependencyMap.containsKey(it)) {
@@ -309,11 +317,20 @@ public class DependencyManager {
                         })
                     .collect(Collectors.toSet()))
         .flatMap(Collection::stream)
+        .filter((it) -> !it.getMavenCoords().startsWith("com.google.guava:guava"))
         .collect(Collectors.toSet());
   }
 
-  private static boolean excludeDependency(VersionlessDependency dep) {
-    return dep.mavenCoords().startsWith("com.android.support:support-annotations");
+  private static boolean excludeDependency(VersionlessDependency dep, ResolvedDependency cDep) {
+    if (dep.mavenCoords().startsWith("com.google.guava:guava")) {
+      return true;
+    } else if (dep.mavenCoords().startsWith("com.google.auto.value:auto-value") && cDep.getModuleVersion().equals("1.5.3")) {
+      return true;
+    } else if (dep.mavenCoords().startsWith("com.google.testing.compile:compile-testing")) {
+      return true;
+    } else {
+      return dep.mavenCoords().startsWith("com.android.support:support-annotations");
+    }
   }
 
   private static RuntimeException dependencyException(ResolvedDependency dependency) {
