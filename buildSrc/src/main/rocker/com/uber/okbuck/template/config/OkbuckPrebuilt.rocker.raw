@@ -18,9 +18,6 @@ def okbuck_prebuilt(
     if deps == None:
         deps = []
 
-    if native.package_name() == ".okbuck/ext/com/google/dagger" and name == "dagger-compiler.jar":
-        deps = deps + [ "//.okbuck/ext/com/google/guava:guava.jar" ]
-
     prebuilt_type = maven_coords.split(':')[2]
 
     if sources_sha256 != None:

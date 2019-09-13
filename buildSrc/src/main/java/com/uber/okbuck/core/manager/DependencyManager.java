@@ -294,7 +294,46 @@ public class DependencyManager {
     return rDependency
         .getChildren()
         .stream()
-        //.filter((it) -> !(it.getModuleGroup().equals("com.google.guava") && it.getName().equals("guava")))
+        .filter(it -> {
+          if (it.getModuleGroup().equals("com.google.guava") && it.getModuleName().equals("guava")) {
+            LOG.info("~~~ analyzing Guava for " + rDependency.getModuleGroup() + ":" + rDependency.getModuleName());
+
+            if (rDependency.getModuleGroup().equals("com.android.tools.lint")) {
+              return true;
+            }
+
+            if (rDependency.getModuleGroup().equals("com.google.dagger")) {
+              return true;
+            }
+
+            if (rDependency.getModuleGroup().equals("com.lyft.dagger1")) {
+              return true;
+            }
+
+            if (rDependency.getModuleGroup().equals("com.google.testing.compile")) {
+              return true;
+            }
+
+            if (rDependency.getModuleGroup().equals("org.reflections")) {
+              return true;
+            }
+
+            if (rDependency.getModuleGroup().equals("com.google.auto")) {
+              return true;
+            }
+
+            if (rDependency.getModuleGroup().equals("com.android.tools")) {
+              return true;
+            }
+
+            LOG.info("~~~ Disabling Guava as child dep of " + rDependency.getModuleGroup() + ":" + rDependency.getModuleName());
+            return false;
+          }
+
+          LOG.info("~~~ Allowing dep " + it + " for " + rDependency.getModuleGroup() + ":" + rDependency.getModuleName());
+
+          return true;
+        })
         .map(
             cDependency ->
                 DependencyFactory.fromDependency(cDependency)
@@ -317,14 +356,11 @@ public class DependencyManager {
                         })
                     .collect(Collectors.toSet()))
         .flatMap(Collection::stream)
-        .filter((it) -> !it.getMavenCoords().startsWith("com.google.guava:guava"))
         .collect(Collectors.toSet());
   }
 
   private static boolean excludeDependency(VersionlessDependency dep, ResolvedDependency cDep) {
-    if (dep.mavenCoords().startsWith("com.google.guava:guava")) {
-      return true;
-    } else if (dep.mavenCoords().startsWith("com.google.auto.value:auto-value") && cDep.getModuleVersion().equals("1.5.3")) {
+    if (dep.mavenCoords().startsWith("com.google.auto.value:auto-value") && cDep.getModuleVersion().equals("1.5.3")) {
       return true;
     } else if (dep.mavenCoords().startsWith("com.google.testing.compile:compile-testing")) {
       return true;
