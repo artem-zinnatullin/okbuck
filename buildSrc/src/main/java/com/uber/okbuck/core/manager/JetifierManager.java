@@ -33,7 +33,7 @@ public final class JetifierManager {
   private static final String JETIFIER_CONFIG_FILE = "custom_mapping.config";
   private static final String JETIFIER_CONFIG_LOCATION =
       JETIFIER_LOCATION + "/" + JETIFIER_CONFIG_FILE;
-  private static final String JETIFIER_BUCK_FILE = JETIFIER_LOCATION + "/BUCK";
+  private static final String JETIFIER_BUCK_FILE = JETIFIER_LOCATION + "/" + OkBuckGradlePlugin.BUCK;
   private static final String JETIFIER_DEPS_CONFIG = "okbuck_jetifier_deps";
   private static final String JETIFIER_GROUP = "com.android.tools.build.jetifier";
   private static final String JETIFIER_CLI_CLASS =

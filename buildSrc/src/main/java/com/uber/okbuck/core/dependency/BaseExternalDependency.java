@@ -99,7 +99,7 @@ public abstract class BaseExternalDependency {
 
   @Memoized
   Path basePath() {
-    return Paths.get(versionless().group().replace('.', File.separatorChar));
+    return Paths.get(versionless().group());
   }
 
   @Memoized

@@ -61,7 +61,7 @@ import org.gradle.api.artifacts.Configuration;
 //
 
 public class OkBuckGradlePlugin implements Plugin<Project> {
-  public static final String BUCK = "BUCK";
+  public static final String BUCK = "BUILD";
   public static final String OKBUCK = "okbuck";
   private static final String DOT_OKBUCK = "." + OKBUCK;
   public static final String WORKSPACE_PATH = DOT_OKBUCK + "/workspace";
@@ -90,8 +90,8 @@ public class OkBuckGradlePlugin implements Plugin<Project> {
   private static final String OKBUCK_CLEAN = "okbuckClean";
   private static final String BUCK_WRAPPER = "buckWrapper";
   private static final String FORCED_OKBUCK = "forcedOkbuck";
-  private static final String PROCESSOR_BUCK_FILE = WORKSPACE_PATH + "/processor/BUCK";
-  private static final String LINT_BUCK_FILE = WORKSPACE_PATH + "/lint/BUCK";
+  private static final String PROCESSOR_BUCK_FILE = WORKSPACE_PATH + "/processor/" + OkBuckGradlePlugin.BUCK;
+  private static final String LINT_BUCK_FILE = WORKSPACE_PATH + "/lint/" + OkBuckGradlePlugin.BUCK;
 
   public static final String OKBUCK_STATE = OKBUCK_STATE_DIR + "/STATE";
   public static final String OKBUCK_SHA256 = OKBUCK_STATE_DIR + "/SHA256";
