@@ -574,11 +574,25 @@ public class JvmTarget extends Target {
         optionBuilder.put("-java-parameters", Optional.empty());
       }
 
+      ImmutableMap<String, Optional<String>> preFinalArguments = optionBuilder.build();
+      ImmutableMap<String, Optional<String>> finalArguments;
+
+      // If "extra_kotlinc_arguments" contain exactly these arguments, then don't render any in BUILD file because we enforce them with macro anyway,
+      // this way BUILD file is smaller and more readable.
+      if (preFinalArguments.size() == 4
+          && Optional.of("1.6").equals(preFinalArguments.get("-jvm-target"))
+          && Optional.empty().equals(preFinalArguments.get("-no-reflect"))
+          && Optional.empty().equals(preFinalArguments.get("-no-stdlib"))
+          && Optional.empty().equals(preFinalArguments.get("-Werror"))) {
+        finalArguments = ImmutableMap.of();
+      } else {
+        finalArguments = preFinalArguments;
+      }
+
       // In the future, could add any other compileKotlin configurations here
 
       // Return de-duping keys and sorting by them.
-      return optionBuilder
-          .build()
+      return finalArguments
           .entrySet()
           .stream()
           .filter(distinctByKey(Map.Entry::getKey))
