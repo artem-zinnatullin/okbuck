@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 public final class AndroidTestRuleComposer extends AndroidBuckRuleComposer {
 
   private static final ImmutableSet<String> ANDROID_TEST_LABELS =
-      ImmutableSet.of("unit", "android", "robolectric");
+      ImmutableSet.of();
 
   private AndroidTestRuleComposer() {
     // no instance
