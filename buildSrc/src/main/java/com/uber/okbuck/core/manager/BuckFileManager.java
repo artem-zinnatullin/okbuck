@@ -1,5 +1,6 @@
 package com.uber.okbuck.core.manager;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.TreeMultimap;
 import com.uber.okbuck.OkBuckGradlePlugin;
@@ -8,11 +9,12 @@ import com.uber.okbuck.extension.RuleOverridesExtension;
 import com.uber.okbuck.template.common.GeneratedHeader;
 import com.uber.okbuck.template.common.LoadStatements;
 import com.uber.okbuck.template.core.Rule;
-import java.io.BufferedOutputStream;
+import kotlin.text.Charsets;
+import org.apache.commons.io.FileUtils;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -45,8 +47,8 @@ public class BuckFileManager {
         throw new IllegalStateException("Couldn't create dir: " + parent);
       }
 
-      try (OutputStream fos = new FileOutputStream(buckFile);
-          BufferedOutputStream os = new BufferedOutputStream(fos)) {
+      try {
+        ByteArrayOutputStream os = new ByteArrayOutputStream(8 * 1024 * 1024);
 
         GeneratedHeader.template().render(os);
         if (!loadStatements.isEmpty()) {
@@ -59,6 +61,24 @@ public class BuckFileManager {
             os.write(NEWLINE);
           }
           rules.get(index).render(os);
+        }
+
+        String buckFileContents = os.toString("UTF-8");
+
+        try {
+          StringBuilder sb = new StringBuilder(buckFileContents.length());
+
+          for (String line: Splitter.onPattern("\\r?\\n").split(buckFileContents)) {
+            // Remove default Java source & target levels.
+            if (!line.contains("source = '8'") && !line.contains("target = '8'")) {
+              sb.append(line);
+              sb.append("\n");
+            }
+          }
+
+          FileUtils.write(buckFile, sb.toString(), Charsets.UTF_8);
+        } catch (IOException e) {
+          throw new RuntimeException("Error writing " + buckFile.getAbsolutePath(), e);
         }
       } catch (IOException e) {
         throw new IllegalStateException("Couldn't create the buck file", e);
