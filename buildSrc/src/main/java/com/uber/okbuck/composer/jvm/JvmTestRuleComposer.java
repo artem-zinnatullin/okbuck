@@ -38,6 +38,21 @@ public final class JvmTestRuleComposer extends JvmBuckRuleComposer {
             .addAll(targets(target.getTargetProvidedDeps(SourceSetType.TEST)))
             .build();
 
+    List<String> preFinalJvmArgs = target.getTestOptions().getJvmArgs();
+    List<String> finalJvmArgs;
+
+    // If vm_args are what we have defaults via macros, don't render them in BUILD files.
+    if (preFinalJvmArgs.size() == 5
+        && preFinalJvmArgs.contains("-Dfile.encoding=UTF-8")
+        && preFinalJvmArgs.contains("-Duser.country=US")
+        && preFinalJvmArgs.contains("-Duser.language=en")
+        && preFinalJvmArgs.contains("-Duser.variant")
+        && preFinalJvmArgs.contains("-ea")) {
+      finalJvmArgs = ImmutableList.of();
+    } else {
+      finalJvmArgs = preFinalJvmArgs;
+    }
+
     return new JvmRule()
         .srcs(target.getTest().getSources())
         .exts(ruleType.getProperties())
@@ -48,7 +63,7 @@ public final class JvmTestRuleComposer extends JvmBuckRuleComposer {
         .sourceCompatibility(target.getSourceCompatibility())
         .targetCompatibility(target.getTargetCompatibility())
         .options(target.getTest().getCustomOptions())
-        .jvmArgs(target.getTestOptions().getJvmArgs())
+        .jvmArgs(finalJvmArgs)
         .env(target.getTestOptions().getEnv())
         .ruleType(ruleType.getBuckName())
         .defaultVisibility()

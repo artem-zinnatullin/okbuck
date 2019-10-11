@@ -1,5 +1,6 @@
 package com.uber.okbuck.composer.android;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.uber.okbuck.core.manager.RobolectricManager;
 import com.uber.okbuck.core.model.android.AndroidLibTarget;
@@ -8,11 +9,12 @@ import com.uber.okbuck.core.model.base.SourceSetType;
 import com.uber.okbuck.core.util.D8Util;
 import com.uber.okbuck.template.android.AndroidTestRule;
 import com.uber.okbuck.template.core.Rule;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 public final class AndroidTestRuleComposer extends AndroidBuckRuleComposer {
 
@@ -44,6 +46,22 @@ public final class AndroidTestRuleComposer extends AndroidBuckRuleComposer {
     providedDeps.addAll(targets(target.getTargetProvidedDeps(SourceSetType.TEST)));
     providedDeps.add(D8Util.RT_STUB_JAR_RULE);
 
+    List<String> preFinalJvmArgs = target.getTestOptions().getJvmArgs();
+    List<String> finalJvmArgs;
+
+    // If vm_args are what we have defaults via macros, don't render them in BUILD files.
+    if (preFinalJvmArgs.size() == 6
+        && preFinalJvmArgs.contains("-Djava.awt.headless=true")
+        && preFinalJvmArgs.contains("-Dfile.encoding=UTF-8")
+        && preFinalJvmArgs.contains("-Duser.country=US")
+        && preFinalJvmArgs.contains("-Duser.language=en")
+        && preFinalJvmArgs.contains("-Duser.variant")
+        && preFinalJvmArgs.contains("-ea")) {
+      finalJvmArgs = ImmutableList.of();
+    } else {
+      finalJvmArgs = preFinalJvmArgs;
+    }
+
     AndroidTestRule androidTest =
         new AndroidTestRule()
             .srcs(target.getTest().getSources())
@@ -57,7 +75,7 @@ public final class AndroidTestRuleComposer extends AndroidBuckRuleComposer {
             .exportedDeps(aidlRuleNames)
             .excludes(appClass != null ? ImmutableSet.of(appClass) : ImmutableSet.of())
             .options(target.getTest().getCustomOptions())
-            .jvmArgs(target.getTestOptions().getJvmArgs())
+            .jvmArgs(finalJvmArgs)
             .env(target.getTestOptions().getEnv())
             .robolectricManifest(manifestRule)
             .runtimeDependency(RobolectricManager.ROBOLECTRIC_CACHE_TARGET);
