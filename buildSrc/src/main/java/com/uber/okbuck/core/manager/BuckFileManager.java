@@ -68,9 +68,11 @@ public class BuckFileManager {
         try {
           StringBuilder sb = new StringBuilder(buckFileContents.length());
 
-          for (String line: Splitter.onPattern("\\r?\\n").split(buckFileContents)) {
+          for (String line : Splitter.onPattern("\\r?\\n").split(buckFileContents)) {
             // Remove default Java source & target levels.
-            if (!line.contains("source = '8'") && !line.contains("target = '8'")) {
+            if (!line.contains("source = '8'")
+                && !line.contains("target = '8'")
+                && !line.contains("disable_lint = True")) {
               sb.append(line);
               sb.append("\n");
             }
