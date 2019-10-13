@@ -21,7 +21,7 @@ public abstract class Rule<T extends Rule> extends DefaultRockerModel {
   protected String name = "";
   protected boolean fileConfiguredVisibility = false;
   protected Collection visibility = ImmutableSet.of();
-  protected Collection deps = ImmutableSet.of();
+  public Collection deps = ImmutableSet.of();
   protected Collection labels = ImmutableSet.of();
   protected Collection extraBuckOpts = ImmutableSet.of();
 

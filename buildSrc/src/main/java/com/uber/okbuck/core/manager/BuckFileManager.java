@@ -3,6 +3,7 @@ package com.uber.okbuck.core.manager;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.TreeMultimap;
+import com.google.errorprone.annotations.Var;
 import com.uber.okbuck.OkBuckGradlePlugin;
 import com.uber.okbuck.core.model.base.RuleType;
 import com.uber.okbuck.extension.RuleOverridesExtension;
@@ -16,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -38,13 +40,35 @@ public class BuckFileManager {
   }
 
   public void writeToBuckFile(
-      List<Rule> rules, File buckFile, Multimap<String, String> extraLoadStatements) {
+      @Var List<Rule> rules, File buckFile, Multimap<String, String> extraLoadStatements) {
     if (!rules.isEmpty()) {
       Multimap<String, String> loadStatements = getLoadStatements(rules);
       loadStatements.putAll(extraLoadStatements);
       File parent = buckFile.getParentFile();
       if (!parent.exists() && !parent.mkdirs()) {
         throw new IllegalStateException("Couldn't create dir: " + parent);
+      }
+
+      if (rules.stream().noneMatch(it -> it.ruleType().contains("android_binary"))) {
+        // Remove android_build_config targets from non-app packages.
+        rules = rules
+            .stream()
+            .filter(it -> !it.ruleType().contains("android_build_config"))
+            .collect(Collectors.toList());
+
+        rules = rules
+            .stream()
+            .map(rule -> {
+                  rule.deps = (Collection) rule
+                      .deps
+                      .stream()
+                      .filter(dep -> !((String) dep).startsWith(":build_config_"))
+                      .collect(Collectors.toList());
+
+                  return rule;
+                }
+            )
+            .collect(Collectors.toList());
       }
 
       try {
@@ -94,7 +118,8 @@ public class BuckFileManager {
         ruleOverridesExtension.getOverrides();
     for (Rule rule : rules) {
       // Android resource template requires res_glob function from buck defs
-      if (RuleType.ANDROID_MODULE.getBuckName().equals(rule.ruleType()) || RuleType.KOTLIN_ANDROID_MODULE.getBuckName().equals(rule.ruleType())) {
+      if (RuleType.ANDROID_MODULE.getBuckName().equals(rule.ruleType())
+          || RuleType.KOTLIN_ANDROID_MODULE.getBuckName().equals(rule.ruleType())) {
         loadStatements.put(OkBuckGradlePlugin.OKBUCK_TARGETS_TARGET, RES_GLOB);
         loadStatements.put(OkBuckGradlePlugin.OKBUCK_TARGETS_TARGET, SUBDIR_GLOB);
       }
