@@ -45,13 +45,6 @@ RockerBody content
     resources_root = '@resources.iterator().next()',
     unbundled_resources_root = '@resources.iterator().next()',
 }
-@if (valid(testTargets)) {
-    tests = [
-    @for (testTarget : testTargets) {
-        '@testTarget',
-    }
-    ],
-}
 @if (valid(apPlugins)) {
     plugins = [
     @for (apPlugin : sorted(apPlugins)) {
