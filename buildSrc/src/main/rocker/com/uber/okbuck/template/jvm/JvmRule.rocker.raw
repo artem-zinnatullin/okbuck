@@ -91,9 +91,6 @@ RockerBody content
     }
     ],
 }
-@if (valid(mavenCoords)) {
-    maven_coords = '@mavenCoords',
-}
 @if (valid(env)) {
     env = @{
     @for ((key, val) : env) {
