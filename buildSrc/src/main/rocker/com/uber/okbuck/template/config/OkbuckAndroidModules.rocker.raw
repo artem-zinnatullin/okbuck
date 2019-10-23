@@ -33,6 +33,7 @@ def okbuck_android_module(
         visibility = None,
         package=None,
         ## Manifest related args
+        # TODO: move to constants.bzl once committed.
         manifest_main_manifest = 'src/main/AndroidManifest.xml',
         manifest_min_sdk = '21',
         manifest_target_sdk = '28',
