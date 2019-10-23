@@ -129,13 +129,13 @@ env
 @if (valid(pkg)) {
     package = '@pkg',
 }
-@if (valid(manifestMainManifest)) {
+@if (valid(manifestMainManifest) && !manifestMainManifest.equals("src/main/AndroidManifest.xml")) {
     manifest_main_manifest = '@manifestMainManifest',
 }
-@if (valid(manifestMinSdk)) {
+@if (valid(manifestMinSdk) && !manifestMinSdk.equals("21")) {
     manifest_min_sdk = '@manifestMinSdk',
 }
-@if (valid(manifestTargetSdk)) {
+@if (valid(manifestTargetSdk) && !manifestTargetSdk.equals("28")) {
     manifest_target_sdk = '@manifestTargetSdk',
 }
 @if (valid(manifestVersionCode)) {
@@ -146,8 +146,6 @@ env
 }
 @if (manifestDebuggable) {
     manifest_debuggable = True,
-} else {
-    manifest_debuggable = False,
 }
 @if (valid(manifestSecondaryManifests)) {
     manifest_secondary_manifests = [

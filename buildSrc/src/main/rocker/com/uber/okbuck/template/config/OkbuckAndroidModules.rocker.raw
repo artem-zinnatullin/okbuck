@@ -21,6 +21,11 @@ def get_libs_res_deps(src_deps):
     return mapped_res_deps
 
 # Macro that represents a union of all common rules to for an android_library
+# Lyft defaults:
+#     manifest_main_manifest = 'src/main/AndroidManifest.xml',
+#     manifest_min_sdk = '21',
+#     manifest_target_sdk = '28',
+#     manifest_debuggable = False,
 def okbuck_android_module(
         name,
         language = None,
@@ -28,9 +33,9 @@ def okbuck_android_module(
         visibility = None,
         package=None,
         ## Manifest related args
-        manifest_main_manifest = None,
-        manifest_min_sdk = None,
-        manifest_target_sdk = None,
+        manifest_main_manifest = 'src/main/AndroidManifest.xml',
+        manifest_min_sdk = '21',
+        manifest_target_sdk = '28',
         manifest_version_code=None,
         manifest_version_name=None,
         manifest_debuggable=False,
