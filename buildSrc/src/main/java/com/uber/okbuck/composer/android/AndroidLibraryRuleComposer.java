@@ -44,7 +44,7 @@ public final class AndroidLibraryRuleComposer extends AndroidBuckRuleComposer {
     Set<String> providedDeps = new HashSet<>();
     providedDeps.addAll(external(target.getExternalProvidedDeps(SourceSetType.MAIN)));
     providedDeps.addAll(targets(target.getTargetProvidedDeps(SourceSetType.MAIN)));
-    providedDeps.add(D8Util.RT_STUB_JAR_RULE);
+    // providedDeps.add(D8Util.RT_STUB_JAR_RULE); We add it through macro.
 
     Set<String> libraryExportedDeps = new HashSet<>();
     libraryExportedDeps.addAll(external(target.getExternalExportedDeps(SourceSetType.MAIN)));

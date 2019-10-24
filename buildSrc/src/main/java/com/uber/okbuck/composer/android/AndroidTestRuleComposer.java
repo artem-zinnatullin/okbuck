@@ -44,7 +44,7 @@ public final class AndroidTestRuleComposer extends AndroidBuckRuleComposer {
     Set<String> providedDeps = new LinkedHashSet<>();
     providedDeps.addAll(external(target.getExternalProvidedDeps(SourceSetType.TEST)));
     providedDeps.addAll(targets(target.getTargetProvidedDeps(SourceSetType.TEST)));
-    providedDeps.add(D8Util.RT_STUB_JAR_RULE);
+    // providedDeps.add(D8Util.RT_STUB_JAR_RULE); We add it through macro.
 
     List<String> preFinalJvmArgs = target.getTestOptions().getJvmArgs();
     List<String> finalJvmArgs;

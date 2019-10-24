@@ -38,7 +38,7 @@ public final class ExopackageAndroidLibraryRuleComposer extends AndroidBuckRuleC
     libraryAptDeps.addAll(targetsApt(target.getTargetAptDeps(SourceSetType.MAIN)));
 
     Set<String> providedDeps = new LinkedHashSet<>();
-    providedDeps.add(D8Util.RT_STUB_JAR_RULE);
+    // providedDeps.add(D8Util.RT_STUB_JAR_RULE); We add it through macro.
 
     AndroidRule androidRule =
         new AndroidRule()
