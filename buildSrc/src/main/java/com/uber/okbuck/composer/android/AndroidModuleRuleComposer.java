@@ -11,9 +11,11 @@ import com.uber.okbuck.core.util.FileUtil;
 import com.uber.okbuck.core.util.ProjectUtil;
 import com.uber.okbuck.template.android.AndroidModuleRule;
 import com.uber.okbuck.template.core.Rule;
+import org.gradle.api.internal.project.DefaultProject;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -59,10 +61,22 @@ public final class AndroidModuleRuleComposer extends AndroidBuckRuleComposer {
       testTargets.add(":" + AndroidBuckRuleComposer.bin(target.getLibInstrumentationTarget()));
     }
 
+    Set<String> srcs;
+    List<String> exts;
+
+    if (shouldGenerateSrcs(target)) {
+      srcs = target.getMain().getSources();
+      exts = target.getRuleType().getProperties();
+    } else {
+      // Do not render srcs on non-app targets.
+      srcs = Collections.emptySet();
+      exts = Collections.emptyList();
+    }
+
     AndroidModuleRule unifiedAndroid =
         new AndroidModuleRule()
-            .srcs(target.getMain().getSources())
-            .exts(target.getRuleType().getProperties())
+            .srcs(srcs)
+            .exts(exts)
             .proguardConfig(target.getConsumerProguardConfig())
             .apPlugins(getApPlugins(target.getApPlugins()))
             .aptDeps(libraryAptDeps)

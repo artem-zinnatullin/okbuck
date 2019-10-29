@@ -1,5 +1,6 @@
 package com.uber.okbuck.composer.base;
 
+import com.google.common.base.Splitter;
 import com.uber.okbuck.core.dependency.ExternalDependency;
 import com.uber.okbuck.core.model.base.Target;
 import com.uber.okbuck.core.model.jvm.JvmTarget;
@@ -10,6 +11,16 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 public abstract class BuckRuleComposer {
+
+  public static boolean shouldGenerateSrcs(Target target) {
+    for (String explicitSrcsPackage: Splitter.on(';').split(System.getenv("OKBUCK_EXPLICIT_SRCS_TARGETS"))) {
+      if (target.getPath().equals(explicitSrcsPackage)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 
   public BuckRuleComposer() {}
 

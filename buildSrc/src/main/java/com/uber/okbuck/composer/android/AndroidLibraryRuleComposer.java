@@ -12,6 +12,7 @@ import com.uber.okbuck.core.util.ProjectUtil;
 import com.uber.okbuck.template.android.AndroidRule;
 import com.uber.okbuck.template.core.Rule;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -61,10 +62,22 @@ public final class AndroidLibraryRuleComposer extends AndroidBuckRuleComposer {
       testTargets.add(":" + AndroidBuckRuleComposer.bin(target.getLibInstrumentationTarget()));
     }
 
+    Set<String> srcs;
+    List<String> exts;
+
+    if (shouldGenerateSrcs(target)) {
+      srcs = target.getMain().getSources();
+      exts = target.getRuleType().getProperties();
+    } else {
+      // Do not render srcs on non-app targets.
+      srcs = Collections.emptySet();
+      exts = Collections.emptyList();
+    }
+
     AndroidRule androidRule =
         new AndroidRule()
-            .srcs(target.getMain().getSources())
-            .exts(target.getRuleType().getProperties())
+            .srcs(srcs)
+            .exts(exts)
             .manifest(manifestRule)
             .proguardConfig(target.getConsumerProguardConfig())
             .apPlugins(getApPlugins(target.getApPlugins()))

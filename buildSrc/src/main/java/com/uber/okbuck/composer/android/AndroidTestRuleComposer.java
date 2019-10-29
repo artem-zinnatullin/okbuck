@@ -12,6 +12,7 @@ import com.uber.okbuck.template.core.Rule;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -62,10 +63,22 @@ public final class AndroidTestRuleComposer extends AndroidBuckRuleComposer {
       finalJvmArgs = preFinalJvmArgs;
     }
 
+    Set<String> srcs;
+    List<String> exts;
+
+    if (shouldGenerateSrcs(target)) {
+      srcs = target.getTest().getSources();
+      exts = target.getTestRuleType().getProperties();
+    } else {
+      // Do not render srcs on non-app targets.
+      srcs = Collections.emptySet();
+      exts = Collections.emptyList();
+    }
+
     AndroidTestRule androidTest =
         new AndroidTestRule()
-            .srcs(target.getTest().getSources())
-            .exts(target.getTestRuleType().getProperties())
+            .srcs(srcs)
+            .exts(exts)
             .apPlugins(getApPlugins(target.getTestApPlugins()))
             .aptDeps(testAptDeps)
             .providedDeps(providedDeps)

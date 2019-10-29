@@ -7,6 +7,8 @@ import com.uber.okbuck.core.model.base.SourceSetType;
 import com.uber.okbuck.core.model.jvm.JvmTarget;
 import com.uber.okbuck.template.core.Rule;
 import com.uber.okbuck.template.jvm.JvmRule;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -53,9 +55,21 @@ public final class JvmTestRuleComposer extends JvmBuckRuleComposer {
       finalJvmArgs = preFinalJvmArgs;
     }
 
+    Set<String> srcs;
+    List<String> exts;
+
+    if (shouldGenerateSrcs(target)) {
+      srcs = target.getTest().getSources();
+      exts = ruleType.getProperties();
+    } else {
+      // Do not render srcs on non-app targets.
+      srcs = Collections.emptySet();
+      exts = Collections.emptyList();
+    }
+
     return new JvmRule()
-        .srcs(target.getTest().getSources())
-        .exts(ruleType.getProperties())
+        .srcs(srcs)
+        .exts(exts)
         .apPlugins(getApPlugins(target.getTestApPlugins()))
         .aptDeps(aptDeps)
         .providedDeps(providedDeps)

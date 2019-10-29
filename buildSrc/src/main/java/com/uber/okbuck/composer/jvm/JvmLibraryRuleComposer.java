@@ -8,6 +8,8 @@ import com.uber.okbuck.core.model.jvm.JvmTarget;
 import com.uber.okbuck.template.core.Rule;
 import com.uber.okbuck.template.jvm.JvmBinaryRule;
 import com.uber.okbuck.template.jvm.JvmRule;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -48,11 +50,23 @@ public final class JvmLibraryRuleComposer extends JvmBuckRuleComposer {
             ? ImmutableList.of(":" + test(target))
             : ImmutableList.of();
 
+    Set<String> srcs;
+    List<String> exts;
+
+    if (shouldGenerateSrcs(target)) {
+      srcs = target.getMain().getSources();
+      exts = ruleType.getProperties();
+    } else {
+      // Do not render srcs on non-app targets.
+      srcs = Collections.emptySet();
+      exts = Collections.emptyList();
+    }
+
     ImmutableList.Builder<Rule> rulesBuilder = new ImmutableList.Builder<>();
     rulesBuilder.add(
         new JvmRule()
-            .srcs(target.getMain().getSources())
-            .exts(ruleType.getProperties())
+            .srcs(srcs)
+            .exts(exts)
             .apPlugins(getApPlugins(target.getApPlugins()))
             .aptDeps(aptDeps)
             .providedDeps(providedDeps)
