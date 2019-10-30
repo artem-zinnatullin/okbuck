@@ -12,7 +12,8 @@ import java.util.List;
 public final class D8Util {
 
   private static final String D8_CACHE = OkBuckGradlePlugin.WORKSPACE_PATH + "/d8";
-  private static final String RT_STUB_JAR = "rt-stub.jar";
+  private static final String RT_STUB = "rt-stub";
+  private static final String RT_STUB_JAR = RT_STUB + ".jar";
   public static final String RT_STUB_JAR_RULE = "//" + D8_CACHE + ":" + RT_STUB_JAR;
 
   private D8Util() {}
@@ -26,7 +27,7 @@ public final class D8Util {
                 .prebuiltType(RuleType.PREBUILT_JAR.getProperties().get(0))
                 .prebuilt(RT_STUB_JAR)
                 .ruleType(RuleType.PREBUILT_JAR.getBuckName())
-                .name(RT_STUB_JAR));
+                .name(RT_STUB));
 
     buckFileManager.writeToBuckFile(d8, new File(D8_CACHE, OkBuckGradlePlugin.BUCK));
   }

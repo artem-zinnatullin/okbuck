@@ -1,5 +1,6 @@
 package com.uber.okbuck.core.manager;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.sun.istack.Nullable;
@@ -19,6 +20,8 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
@@ -96,13 +99,14 @@ public final class JetifierManager {
 
       for (String module : INTERNAL_MODULES) {
         FileUtil.copyResourceToProject("jetifier/" + module, new File(JETIFIER_LOCATION, module));
+        String targetName = StringUtils.removeEnd(module, ".jar");
         rulesBuilder.add(
             new NativePrebuilt()
                 .prebuiltType(RuleType.PREBUILT_JAR.getProperties().get(0))
                 .prebuilt(module)
                 .ruleType(RuleType.PREBUILT_JAR.getBuckName())
-                .name(module));
-        binaryDependencies.add(":" + module);
+                .name(targetName));
+        binaryDependencies.add(":" + targetName);
       }
 
       rulesBuilder.add(

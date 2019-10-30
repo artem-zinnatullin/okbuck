@@ -339,7 +339,7 @@ def okbuck_prebuilt_jar(
     ):
     jar_path = binary_jar
     if enable_jetifier:
-        jetified = name.replace('.jar', '-jetified.jar')
+        jetified = name + '-jetified.jar'
         genname = "unjetified_" + name
         jar_path =  ":{}".format(genname)
         native.genrule(

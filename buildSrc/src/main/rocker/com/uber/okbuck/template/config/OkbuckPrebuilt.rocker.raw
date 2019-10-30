@@ -29,11 +29,11 @@ def okbuck_prebuilt(
     if prebuilt_type in name:
         name_without_type = name[:name.index('.' + prebuilt_type)]
 
-    prebuilt_file_name = name + '__downloaded'
+    prebuilt_file_name = name + '__downloaded' + '.' + prebuilt_type
     native.http_file(
         name = prebuilt_file_name,
         urls = [ 'mvn:' + maven_coords ],
-        out = name,
+        out = name + "." + prebuilt_type,
         sha256 = sha256,
     )
 
