@@ -63,14 +63,23 @@ public final class AndroidModuleRuleComposer extends AndroidBuckRuleComposer {
 
     Set<String> srcs;
     List<String> exts;
+    String ijProjectResDir;
+    Set<String> resDirs;
+    Set<String> resRes;
 
     if (shouldGenerateSrcs(target)) {
       srcs = target.getMain().getSources();
       exts = target.getRuleType().getProperties();
+      ijProjectResDir = target.getProjectResDir();
+      resDirs = target.getResDirs();
+      resRes = target.getResDirs();
     } else {
       // Do not render srcs on non-app targets.
       srcs = Collections.emptySet();
       exts = Collections.emptyList();
+      ijProjectResDir = null;
+      resDirs = Collections.emptySet();
+      resRes = Collections.emptySet();
     }
 
     AndroidModuleRule unifiedAndroid =
@@ -83,7 +92,7 @@ public final class AndroidModuleRuleComposer extends AndroidBuckRuleComposer {
             .providedDeps(providedDeps)
             .exportedDeps(libraryExportedDeps)
             .resources(target.getMain().getJavaResources())
-            .resDirs(target.getResDirs())
+            .resDirs(resDirs)
             .sourceCompatibility(target.getSourceCompatibility())
             .targetCompatibility(target.getTargetCompatibility())
             .testTargets(testTargets)
@@ -145,8 +154,8 @@ public final class AndroidModuleRuleComposer extends AndroidBuckRuleComposer {
     // Resource related arguments
     return unifiedAndroid
         .pkg(target.getResPackage())
-        .resRes(target.getResDirs())
-        .resProjectRes(target.getProjectResDir())
+        .resRes(resRes)
+        .resProjectRes(ijProjectResDir)
         .resAssets(target.getAssetDirs())
         .resResourceUnion(target.getOkbuck().useResourceUnion())
         .resExtraDeps(extraResDeps);

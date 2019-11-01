@@ -4,6 +4,8 @@ String androidLibraryRule,
 String manifestRule
 )
 
+load('//.okbuck/defs:okbuck_targets.bzl', 'res_glob')
+
 def get_rule_dep(rule_name):
     return ':{}'.format(rule_name)
 
@@ -43,7 +45,7 @@ def okbuck_android_module(
         manifest_secondary_manifests=None,
         ## Resources related args
         res_res = None,
-        res_project_res = None,
+        res_project_res = 'src/main/res',
         res_assets = None,
         res_resource_union=None,
         res_extra_deps = [],
@@ -65,6 +67,9 @@ def okbuck_android_module(
         debuggable = manifest_debuggable,
         secondary_manifests = manifest_secondary_manifests,
     )
+
+    if res_res == None:
+        res_res = res_glob([('src/main/res', '**')])
 
     res_ext_aar_deps = get_exts_aar_deps(deps)
     res_lib_deps = get_libs_res_deps(deps)
