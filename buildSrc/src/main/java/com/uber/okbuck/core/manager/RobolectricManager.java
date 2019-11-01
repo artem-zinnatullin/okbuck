@@ -93,6 +93,7 @@ public final class RobolectricManager {
   }
 
   @SuppressWarnings("unused")
+  // See https://github.com/robolectric/robolectric/blob/17011123432354750deb4964d5ba6b5a12b727c4/buildSrc/src/main/groovy/AndroidSdk.groovy
   enum API {
     API_16("4.1.2_r1", "r1"),
     API_17("4.2.2_r1.2", "r1"),
@@ -106,7 +107,8 @@ public final class RobolectricManager {
     API_26("8.0.0_r4", "r1"),
     API_27("8.1.0", "4611349"),
     API_P("P", "4651975"),
-    API_28("9", "4913185-2");
+    API_28("9", "4913185-2"),
+    API_29("10", "5803371");
 
     private final String androidVersion;
     private final String frameworkSdkBuildVersion;
@@ -151,6 +153,8 @@ public final class RobolectricManager {
           return API_28;
         case "P":
           return API_P;
+        case "29":
+          return API_29;
         default:
           throw new IllegalStateException("Unknown Robolectric API Level: " + apiLevel);
       }
