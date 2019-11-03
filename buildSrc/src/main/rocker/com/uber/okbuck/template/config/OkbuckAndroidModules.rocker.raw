@@ -44,8 +44,9 @@ def okbuck_android_module(
         manifest_debuggable=False,
         manifest_secondary_manifests=None,
         ## Resources related args
+        has_resources = False,
         res_res = None,
-        res_project_res = 'src/main/res',
+        res_project_res = None,
         res_assets = None,
         res_resource_union=None,
         res_extra_deps = [],
@@ -68,8 +69,11 @@ def okbuck_android_module(
         secondary_manifests = manifest_secondary_manifests,
     )
 
-    if res_res == None:
-        res_res = res_glob([('src/main/res', '**')])
+    if has_resources:
+        if res_res == None:
+            res_res = res_glob([('src/main/res', '**')])
+        if res_project_res == None:
+            res_project_res = 'src/main/res'
 
     res_ext_aar_deps = get_exts_aar_deps(deps)
     res_lib_deps = get_libs_res_deps(deps)

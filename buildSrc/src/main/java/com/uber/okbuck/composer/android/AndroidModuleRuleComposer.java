@@ -67,6 +67,8 @@ public final class AndroidModuleRuleComposer extends AndroidBuckRuleComposer {
     Set<String> resDirs;
     Set<String> resRes;
 
+    boolean hasResources = target.getResDirs().size() > 0;
+
     if (shouldGenerateSrcs(target)) {
       srcs = target.getMain().getSources();
       exts = target.getRuleType().getProperties();
@@ -92,6 +94,7 @@ public final class AndroidModuleRuleComposer extends AndroidBuckRuleComposer {
             .providedDeps(providedDeps)
             .exportedDeps(libraryExportedDeps)
             .resources(target.getMain().getJavaResources())
+            .hasResources(hasResources)
             .resDirs(resDirs)
             .sourceCompatibility(target.getSourceCompatibility())
             .targetCompatibility(target.getTargetCompatibility())
