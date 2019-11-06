@@ -136,7 +136,7 @@ env
 @if (valid(manifestMinSdk) && !manifestMinSdk.equals("21")) {
     manifest_min_sdk = '@manifestMinSdk',
 }
-@if (valid(manifestTargetSdk) && !manifestTargetSdk.equals("28")) {
+@if (valid(manifestTargetSdk) && !manifestTargetSdk.equals("29")) {
     manifest_target_sdk = '@manifestTargetSdk',
 }
 @if (valid(manifestVersionCode)) {
