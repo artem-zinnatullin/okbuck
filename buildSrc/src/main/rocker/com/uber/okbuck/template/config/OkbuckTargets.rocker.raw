@@ -315,8 +315,8 @@ def okbuck_android_prebuilt_aar(
     ):
     aar_path = aar
     if enable_jetifier:
-        jetified = name.replace('.aar', '-jetified.aar')
-        genname = "unjetified_" + name
+        jetified = name + "_jetified.aar"
+        genname = name + "_unjetified.aar"
         aar_path =  ":{}".format(genname)
         native.genrule(
             name = genname,
@@ -339,8 +339,8 @@ def okbuck_prebuilt_jar(
     ):
     jar_path = binary_jar
     if enable_jetifier:
-        jetified = name + '-jetified.jar'
-        genname = "unjetified_" + name
+        jetified = name + '_jetified.jar'
+        genname = name + "_unjetified.jar"
         jar_path =  ":{}".format(genname)
         native.genrule(
             name = genname,

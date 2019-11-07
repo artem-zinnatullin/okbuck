@@ -126,12 +126,7 @@ public class ExternalDependency {
 
   /** Returns the target name of the dependency. */
   public String getTargetName() {
-    // Seems that aars are a bit special to Buck, we need to keep .aar in target names otherwise resource processing doesn't work
-    if ("aar".equals(getPackaging())) {
-      return this.base.targetName() + ".aar";
-    } else {
-      return this.base.targetName();
-    }
+    return this.base.targetName();
   }
 
   /** Returns the target name of the dependency without packaging. */
@@ -141,12 +136,7 @@ public class ExternalDependency {
 
   /** Returns the versionless target name of the dependency. */
   public String getVersionlessTargetName() {
-    // Seems that aars are a bit special to Buck, we need to keep .aar in target names otherwise resource processing doesn't work
-    if ("aar".equals(getPackaging())) {
-      return this.base.targetName() + ".aar";
-    } else {
-      return this.base.targetName();
-    }
+    return this.base.targetName();
   }
 
   /** Returns the target path of the dependency. */
