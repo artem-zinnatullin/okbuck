@@ -13,10 +13,6 @@ import javax.annotation.Nullable;
 public abstract class BuckRuleComposer {
 
   public static boolean isExplicitSrcsTarget(Target target) {
-    if (target.getName().startsWith("bin_") || target.getName().startsWith("src_")) {
-      return true;
-    }
-
     for (String explicitSrcsPackage: Splitter.on(';').split(System.getenv("OKBUCK_EXPLICIT_SRCS_TARGETS"))) {
       if (target.getPath().equals(explicitSrcsPackage)) {
         return true;
