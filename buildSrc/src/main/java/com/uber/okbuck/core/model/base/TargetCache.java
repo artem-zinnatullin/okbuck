@@ -5,6 +5,7 @@ import com.android.build.gradle.LibraryExtension;
 import com.android.build.gradle.api.BaseVariant;
 import com.google.common.collect.ImmutableMap;
 import com.google.errorprone.annotations.Var;
+import com.uber.okbuck.composer.base.BuckRuleComposer;
 import com.uber.okbuck.core.model.android.AndroidAppTarget;
 import com.uber.okbuck.core.model.android.AndroidLibTarget;
 import com.uber.okbuck.core.model.jvm.JvmTarget;
@@ -47,7 +48,16 @@ public final class TargetCache {
                   .stream()
                   .collect(
                       ImmutableMap.toImmutableMap(
-                          BaseVariant::getName, v -> new AndroidLibTarget(project, v.getName())));
+                          BaseVariant::getName, v -> {
+                            AndroidLibTarget androidLibTarget = new AndroidLibTarget(project,
+                                v.getName());
+
+                            if (BuckRuleComposer.isExplicitSrcsTarget(androidLibTarget)) {
+                              return androidLibTarget;
+                            } else {
+                              return new AndroidLibTarget(project, "lib");
+                            }
+                          }));
           break;
         case KOTLIN_LIB:
           targets =

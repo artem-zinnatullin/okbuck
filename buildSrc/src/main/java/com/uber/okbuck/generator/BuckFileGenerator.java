@@ -300,7 +300,14 @@ public final class BuckFileGenerator {
         .stream()
         .filter(rule -> rule instanceof AndroidRule || rule instanceof AndroidModuleRule)
         .map(Rule::buckName)
-        .map(ruleName -> ruleName.replace(":src_", ":res_"))
+        .filter(ruleName -> ruleName.startsWith(":src_") || ruleName.startsWith(":bin_") || ruleName.startsWith(":lib"))
+        .map(ruleName -> {
+          if (ruleName.startsWith(":src_") || ruleName.startsWith(":bin_")) {
+            return ruleName.replace(":src_", ":res_");
+          } else {
+            return ":res";
+          }
+        })
         .collect(Collectors.toList());
   }
 }

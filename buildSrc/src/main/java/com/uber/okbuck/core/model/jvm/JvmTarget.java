@@ -11,6 +11,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.errorprone.annotations.Var;
 import com.uber.okbuck.OkBuckGradlePlugin;
+import com.uber.okbuck.composer.base.BuckRuleComposer;
 import com.uber.okbuck.composer.jvm.JvmBuckRuleComposer;
 import com.uber.okbuck.core.annotation.AnnotationProcessorCache;
 import com.uber.okbuck.core.annotation.JvmPlugin;
@@ -487,7 +488,7 @@ public class JvmTarget extends Target {
    * @return the list with all friend paths
    */
   public Map<String, List<String>> getKotlinFriendPaths(boolean isTest) {
-    if (!isKotlin || !isTest) {
+    if (!isKotlin || !isTest || !BuckRuleComposer.isExplicitSrcsTarget(this)) {
       return ImmutableMap.of();
     }
 

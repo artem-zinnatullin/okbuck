@@ -10,19 +10,35 @@ import java.util.stream.Collectors;
 public class JvmBuckRuleComposer extends BuckRuleComposer {
 
   public static String src(JvmTarget target) {
-    return "src_" + target.getName();
+    if (isExplicitSrcsTarget(target)) {
+      return "src_" + target.getName();
+    } else {
+      return "lib";
+    }
   }
 
   public static String bin(JvmTarget target) {
-    return "bin_" + target.getName();
+    if (isExplicitSrcsTarget(target)) {
+      return "bin_" + target.getName();
+    } else {
+      return "bin";
+    }
   }
 
   public static String test(JvmTarget target) {
-    return "test_" + target.getName();
+    if (isExplicitSrcsTarget(target)) {
+      return "test_" + target.getName();
+    } else {
+      return "test";
+    }
   }
 
   public static String integrationTest(JvmTarget target) {
-    return "integration_test_" + target.getName();
+    if (isExplicitSrcsTarget(target)) {
+      return "integration_test_" + target.getName();
+    } else {
+      return "integration_test";
+    }
   }
 
   /**

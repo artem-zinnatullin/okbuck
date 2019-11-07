@@ -10,7 +10,11 @@ import java.util.stream.Collectors;
 public abstract class AndroidBuckRuleComposer extends JvmBuckRuleComposer {
 
   public static String res(AndroidTarget target) {
-    return "res_" + target.getName();
+    if (isExplicitSrcsTarget(target)) {
+      return "res_" + target.getName();
+    } else {
+      return target.getName() + "_res";
+    }
   }
 
   static String resRule(AndroidTarget target) {
@@ -30,7 +34,11 @@ public abstract class AndroidBuckRuleComposer extends JvmBuckRuleComposer {
   }
 
   public static String libManifest(AndroidTarget target) {
-    return "manifest_lib_" + target.getName();
+    if (isExplicitSrcsTarget(target)) {
+      return "manifest_lib_" + target.getName();
+    } else {
+      return "lib_manifest";
+    }
   }
 
   static String binManifest(AndroidTarget target) {

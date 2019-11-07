@@ -5,6 +5,7 @@ import com.android.build.gradle.api.BaseVariant;
 import com.android.build.gradle.api.LibraryVariant;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
+import com.uber.okbuck.composer.base.BuckRuleComposer;
 import com.uber.okbuck.core.model.base.ProjectType;
 import com.uber.okbuck.core.util.FileUtil;
 import com.uber.okbuck.core.util.ProjectUtil;
@@ -48,7 +49,13 @@ public class AndroidLibTarget extends AndroidTarget {
         libraryExtension
             .getLibraryVariants()
             .stream()
-            .filter(variant -> variant.getName().equals(getName()))
+            .filter(variant -> {
+              if (BuckRuleComposer.isExplicitSrcsTarget(this)) {
+                return variant.getName().equals(getName());
+              } else {
+                return variant.getName().equals("release");
+              }
+            })
             .findFirst();
 
     Preconditions.checkArgument(baseVariantOptional.isPresent());

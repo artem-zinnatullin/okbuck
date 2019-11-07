@@ -4,23 +4,11 @@ String androidLibraryRule,
 String manifestRule
 )
 
-load('//.okbuck/defs:okbuck_targets.bzl', 'res_glob')
+load("//.okbuck/defs:okbuck_targets.bzl", "res_glob")
+load("//tools/buck:targets_meta_api.bzl", "find_res_deps_for")
 
 def get_rule_dep(rule_name):
     return ':{}'.format(rule_name)
-
-def get_exts_aar_deps(src_deps):
-    return [dep for dep in src_deps if dep.endswith('.aar')]
-
-def src_to_res(str):
-    return str.replace(":src_", ":res_", 1)
-
-def get_libs_res_deps(src_deps):
-    mapped_res_deps = []
-    for dep in src_deps:
-        if (':src_' in dep and not dep.endswith(':src_main')):
-            mapped_res_deps.append(src_to_res(dep))
-    return mapped_res_deps
 
 # Macro that represents a union of all common rules to for an android_library
 # Lyft defaults:
@@ -56,7 +44,13 @@ def okbuck_android_module(
         **kwargs
     ):
 
-    manifest_rule_name = name.replace("src", "manifest_lib", 1)
+    if name.startswith("src"):
+        manifest_rule_name = name.replace("src", "manifest_lib", 1)
+        res_rule_name = name.replace("src", "res", 1)
+    else:
+        manifest_rule_name = name + "_manifest"
+        res_rule_name = name + "_res"
+
     @(manifestRule)(
         name = manifest_rule_name,
         main_manifest = manifest_main_manifest,
@@ -75,15 +69,10 @@ def okbuck_android_module(
         if res_project_res == None:
             res_project_res = 'src/main/res'
 
-    res_ext_aar_deps = get_exts_aar_deps(deps)
-    res_lib_deps = get_libs_res_deps(deps)
-    res_deps = res_ext_aar_deps + res_lib_deps + res_extra_deps
+    res_deps = find_res_deps_for(deps) + res_extra_deps
 
-    res_exported_ext_aar_deps = get_exts_aar_deps(exported_deps)
-    res_exported_lib_deps = get_libs_res_deps(exported_deps)
-    res_exported_deps = res_exported_ext_aar_deps + res_exported_lib_deps
+    res_exported_deps = find_res_deps_for(exported_deps)
 
-    res_rule_name = name.replace("src", "res", 1)
     res_kwargs = dict(
         name = res_rule_name,
         deps = res_deps if res_deps else None,
@@ -109,8 +98,8 @@ def okbuck_android_module(
     src_kwargs.update(kwargs)
 
     src_deps = deps + \
-               res_lib_deps + \
-               res_exported_lib_deps + \
+               res_deps + \
+               res_exported_deps + \
                [get_rule_dep(res_rule_name), get_rule_dep(manifest_rule_name)]
 
     src_kwargs.update({'deps' : sorted(src_deps)})

@@ -12,7 +12,11 @@ import javax.annotation.Nullable;
 
 public abstract class BuckRuleComposer {
 
-  public static boolean shouldGenerateSrcs(Target target) {
+  public static boolean isExplicitSrcsTarget(Target target) {
+    if (target.getName().startsWith("bin_") || target.getName().startsWith("src_")) {
+      return true;
+    }
+
     for (String explicitSrcsPackage: Splitter.on(';').split(System.getenv("OKBUCK_EXPLICIT_SRCS_TARGETS"))) {
       if (target.getPath().equals(explicitSrcsPackage)) {
         return true;
@@ -20,6 +24,10 @@ public abstract class BuckRuleComposer {
     }
 
     return false;
+  }
+
+  public static boolean shouldGenerateSrcs(Target target) {
+    return isExplicitSrcsTarget(target);
   }
 
   public BuckRuleComposer() {}
@@ -41,7 +49,11 @@ public abstract class BuckRuleComposer {
   }
 
   private static String targets(Target dep) {
-    return String.format("//%s:src_%s", dep.getPath(), dep.getName());
+    if (isExplicitSrcsTarget(dep)) {
+      return String.format("//%s:src_%s", dep.getPath(), dep.getName());
+    } else {
+      return String.format("//%s:lib", dep.getPath());
+    }
   }
 
   public static Set<String> targetsApt(Set<Target> deps) {
