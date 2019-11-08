@@ -20,7 +20,6 @@ def okbuck_android_module(
         name,
         language = None,
         ## common args
-        visibility = None,
         package=None,
         ## Manifest related args
         # TODO: move to constants.bzl once committed.
@@ -81,7 +80,6 @@ def okbuck_android_module(
         project_res = res_project_res,
         package = package,
         resource_union = res_resource_union,
-        visibility = visibility
     )
     if res_deps:
       res_kwargs.update({'deps' : sorted(res_deps)})
@@ -92,7 +90,6 @@ def okbuck_android_module(
 
     src_kwargs = dict(
         name = name,
-        visibility = visibility,
         manifest = get_rule_dep(manifest_rule_name),
     )
     src_kwargs.update(kwargs)
