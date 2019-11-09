@@ -50,7 +50,7 @@ env
 @if (valid(manifest)) {
     manifest = '@manifest',
 }
-@if (valid(robolectricManifest)) {
+@if (valid(robolectricManifest) && !":lib_manifest".equals(robolectricManifest)) {
     robolectric_manifest = '@robolectricManifest',
 }
 @if (generateR2) {

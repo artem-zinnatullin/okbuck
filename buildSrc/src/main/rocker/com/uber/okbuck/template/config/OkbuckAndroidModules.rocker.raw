@@ -5,6 +5,7 @@ String manifestRule
 )
 
 load("//.okbuck/defs:okbuck_targets.bzl", "res_glob")
+load("//tools/buck:development.bzl", "dedup_list")
 load("//tools/buck:targets_meta_api.bzl", "find_res_deps_for")
 
 def get_rule_dep(rule_name):
@@ -94,10 +95,10 @@ def okbuck_android_module(
     )
     src_kwargs.update(kwargs)
 
-    src_deps = deps + \
+    src_deps = dedup_list(deps + \
                res_deps + \
                res_exported_deps + \
-               [get_rule_dep(res_rule_name), get_rule_dep(manifest_rule_name)]
+               [get_rule_dep(res_rule_name), get_rule_dep(manifest_rule_name)])
 
     src_kwargs.update({'deps' : sorted(src_deps)})
     if exported_deps:
