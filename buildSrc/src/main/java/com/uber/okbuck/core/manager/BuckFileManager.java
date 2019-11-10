@@ -92,7 +92,17 @@ public class BuckFileManager {
         try {
           StringBuilder sb = new StringBuilder(buckFileContents.length());
 
-          for (String line : Splitter.onPattern("\\r?\\n").split(buckFileContents)) {
+          for (@Var String line : Splitter.onPattern("\\r?\\n").split(buckFileContents)) {
+            if (line.equals("load('//.okbuck/defs:okbuck_android_modules.bzl', 'okbuck_android_module')")) {
+              line = "load(\"//tools/buck:lyft_rules.bzl\", \"lyft_android_library\")";
+            } else if (line.equals("load('//.okbuck/defs:okbuck_android_modules.bzl', 'okbuck_kotlin_android_module')")) {
+              line = "load(\"//tools/buck:lyft_rules.bzl\", \"lyft_android_library\")";
+            } else if (line.contains("okbuck_android_module(")) {
+              line = line.replace("okbuck_android_module", "lyft_android_library");
+            } else if (line.contains("okbuck_kotlin_android_module(")) {
+              line = line.replace("okbuck_kotlin_android_module", "lyft_android_library");
+            }
+
             // Remove default Java source & target levels.
             if (!line.contains("source = '8'")
                 && !line.contains("target = '8'")

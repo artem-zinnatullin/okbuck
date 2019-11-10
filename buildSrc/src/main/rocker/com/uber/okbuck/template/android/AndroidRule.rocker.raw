@@ -59,9 +59,6 @@ env
 @if (valid(proguardConfig)) {
     proguard_config = '@proguardConfig',
 }
-@if (valid(language)) {
-    language = '@language',
-}
 @if (!disableLintTemplate) {
 @if (!disableLint) {
 @if (valid(srcs)) {
