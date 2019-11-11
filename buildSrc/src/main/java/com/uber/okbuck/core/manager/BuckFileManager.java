@@ -101,6 +101,8 @@ public class BuckFileManager {
               line = line.replace("okbuck_android_module", "lyft_android_library");
             } else if (line.contains("okbuck_kotlin_android_module(")) {
               line = line.replace("okbuck_kotlin_android_module", "lyft_android_library");
+            } else if (line.contains("//.okbuck/ext/")) {
+              line = line.replace("//.okbuck/ext/", "//third_party/");
             }
 
             // Remove default Java source & target levels.
